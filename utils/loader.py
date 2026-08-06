@@ -3,7 +3,7 @@ import glob
 import frontmatter
 from werkzeug.utils import secure_filename
 
-POST_DIR = os.path.join(os.path.dirname(os.path.dirname(__file__)), 'post')
+POST_DIR = os.path.join(os.path.dirname(os.path.dirname(__file__)), 'posts')
 
 def _is_safe_slug(slug: str) -> bool:
     """ 
@@ -28,6 +28,10 @@ def get_all_posts(parse_body: bool = False) -> list[dict]:
     """
     posts = []
     pattern = os.path.join(POST_DIR, '*.md')
+    files = glob.glob(pattern)
+
+    print(f"\n[DEBUG] Path folder posts: {POST_DIR}")
+    print(f"[DEBUG] File .md yang ditemukan: {files}")
 
     for filepath in glob.glob(pattern):
         try:
@@ -49,12 +53,12 @@ def get_all_posts(parse_body: bool = False) -> list[dict]:
             if parse_body:
                 item['content'] = post.content
 
-            post.append(item)
+            posts.append(item)
         except Exception as e:
             # Mengabaikan file yang gagal di-unggah/corrupt
             continue
 
-    post.sort(key=lambda x: x['date'], reverse = True)
+    posts.sort(key=lambda x: x['date'], reverse = True)
     return posts
 
 def get_post_by_slug(slug: str) -> dict | None:

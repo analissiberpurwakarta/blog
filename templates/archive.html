@@ -1,0 +1,16 @@
+{% extends 'base.html' %}
+
+{% block title %}Arsip Artikel — Analis Siber Purwakarta{% endblock %}
+
+{% block content %}
+<h1 class="page-title">Arsip Artikel</h1>
+
+<div class="post-list">
+  {% for post in posts %}
+  <div class="archive-item">
+    <a href="/posts/{{ post.slug }}" class="archive-link">{{ post.title }}</a>
+    <span class="post-meta archive-meta">{{ post.date }}</span>
+  </div>
+  {% endfor %}
+</div>
+{% endblock %}

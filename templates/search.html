@@ -1,0 +1,46 @@
+{% extends 'base.html' %}
+
+{% block title %}Cari Artikel — Analis Siber Purwakarta{% endblock %}
+
+{% block content %}
+<h1 class="page-title">Cari Artikel</h1>
+<input type="text" id="searchInput" class="search-input" placeholder="Ketik judul artikel atau tag..." autofocus>
+
+<div class="post-list" id="searchResults"></div>
+
+<script>
+  const searchData = {{ posts|tojson }};
+  const input = document.getElementById('searchInput');
+  const resultsDiv = document.getElementById('searchResults');
+
+  function render(items) {
+    if (items.length === 0) {
+      resultsDiv.innerHTML = '<p class="post-summary">Artikel tidak ditemukan.</p>';
+      return;
+    }
+    resultsDiv.innerHTML = items.map(p => `
+      <article class="post-card">
+        <h2 class="post-title"><a href="/posts/${p.slug}">${p.title}</a></h2>
+        <div class="post-meta">${p.date}</div>
+        <p class="post-summary">${p.summary}</p>
+      </article>
+    `).join('');
+  }
+
+  render(posts);
+
+  input.addEventListener('input', (e) => {
+    const q = e.target.value.toLowerCase().trim();
+    if (!q) {
+      render(posts);
+      return;
+    }
+    const filtered = posts.filter(p => 
+      p.title.toLowerCase().includes(q) || 
+      p.summary.toLowerCase().includes(q) ||
+      p.tags.some(t => t.toLowerCase().includes(q))
+    );
+    render(filtered);
+  });
+</script>
+{% endblock %}
