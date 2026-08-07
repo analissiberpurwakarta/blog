@@ -8,7 +8,7 @@
   <div class="post-meta">{{ post.date }}</div>
   <div class="tags mb-1-5">
     {% for tag in post.tags %}
-    <a href="/tag/{{ tag }}" class="tag-badge">#{{ tag }}</a>
+    <a href="{{ base_url }}/tag/{{ tag }}.html" class="tag-badge">#{{ tag }}</a>
     {% endfor %}
   </div>
 

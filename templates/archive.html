@@ -8,7 +8,7 @@
 <div class="post-list">
   {% for post in posts %}
   <div class="archive-item">
-    <a href="/posts/{{ post.slug }}" class="archive-link">{{ post.title }}</a>
+    <a href="{{ base_url }}/posts/{{ post.slug }}.html" class="archive-link">{{ post.title }}</a>
     <span class="post-meta archive-meta">{{ post.date }}</span>
   </div>
   {% endfor %}
