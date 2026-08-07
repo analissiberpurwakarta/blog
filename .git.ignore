@@ -12,6 +12,7 @@ ENV/
 env.bak/
 venv.bak/
 .venv/
+utils/__pycache__/
 
 # ==========================================
 # Flask & App Specific
