@@ -6,6 +6,6 @@
 <div class="error-container">
   <h1 class="error-code">404</h1>
   <p class="error-message">Halaman tidak ditemukan.</p>
-  <a href="/" class="tag-badge btn-primary">← Kembali ke Home</a>
+  <a href="{{ base_url|default('') }}" class="tag-badge btn-primary">← Kembali ke Home</a>
 </div>
 {% endblock %}
