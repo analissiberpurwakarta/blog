@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cari Artikel — Analis Siber Purwakarta</title>
+    <link rel="stylesheet" href="/static/css/style.css">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <a href="/" class="brand">Analis Siber Purwakarta</a>
+            <nav>
+                <a href="/">Home</a>
+                <a href="/archive">Archive</a>
+                <a href="/search">Search</a>
+            </nav>
+        </header>
+
+        <main>
+            
+<h1 class="page-title">Cari Artikel</h1>
+<input type="text" id="searchInput" class="search-input" placeholder="Ketik judul artikel atau tag..." autofocus>
+
+<div class="post-list" id="searchResults"></div>
+
+<script>
+  const searchData = [{"date": "2026-08-06", "slug": "hello-world", "summary": "Artikel pertama di blog Analis Siber Purwakarta.", "tags": ["general", "intro"], "title": "Hello World"}];
+  const input = document.getElementById('searchInput');
+  const resultsDiv = document.getElementById('searchResults');
+
+function render(items) {
+  if (items.length === 0) {
+    resultsDiv.innerHTML = '<p class="post-summary">Artikel tidak ditemukan.</p>';
+    return;
+  }
+  resultsDiv.innerHTML = items.map(p => `
+    <article class="post-card">
+      <h2 class="post-title"><a href="/posts/${p.slug}">${p.title}</a></h2>
+      <div class="post-meta">${p.date}</div>
+      <p class="post-summary">${p.summary}</p>
+    </article>
+  `).join('');
+}
+
+render(searchData);
+
+input.addEventListener('input', (e) => {
+  const q = e.target.value.toLowerCase().trim();
+  if (!q) {
+    render(searchData);
+    return;
+  }
+  const filtered = searchData.filter(p => 
+    p.title.toLowerCase().includes(q) || 
+    p.summary.toLowerCase().includes(q) ||
+    p.tags.some(t => t.toLowerCase().includes(q))
+  );
+  render(filtered);
+});
+</script>
+
+        </main>
+
+        <footer>
+            &copy; 2026 Analis Siber Purwakarta
+        </footer>
+    </div>
+</body>
+</html>
