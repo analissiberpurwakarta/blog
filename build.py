@@ -4,6 +4,7 @@ from app import app
 from utils.loader import get_all_posts
 
 OUTPUT_DIR = os.path.join(os.path.dirname(__file__), 'output')
+BASE_URL = os.getenv('BASE_URL', '/blog')
 
 # Menghapus folder output lama jika ada, lalu buat yang baru
 def clean_output_dir():
