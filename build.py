@@ -76,6 +76,11 @@ def build_static_site():
             if res.status_code == 200:
                 save_html(f'/tag/{tag}', res.get_data(as_text=True))
 
+        # Costum 404 Page
+        res = client.get('/404')
+        if res.status_code == 200:
+            save_html('/404', res.get_data(as_text=True))
+
     print("\n[✔] Build complete! Static files generated in 'output/' directory.")
 
 if __name__ == '__main__':
