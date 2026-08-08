@@ -78,8 +78,10 @@ def build_static_site():
 
         # Costum 404 Page
         res = client.get('/404')
-        if res.status_code == 200:
+        if res.status_code in (200, 404):
             save_html('/404', res.get_data(as_text=True))
+        else:
+            print(f"  [!] GAGAL generate 404.html — status: {res.status_code}")
 
     print("\n[✔] Build complete! Static files generated in 'output/' directory.")
 
