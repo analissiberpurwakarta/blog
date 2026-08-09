@@ -62,28 +62,27 @@ def get_all_posts(parse_body: bool = False) -> list[dict]:
     return posts
 
 def get_post_by_slug(slug: str) -> dict | None:
-    """
-    Mengambil satu artikel berdasarkan slug.
-    Mengembalikan dict berisi metadata + raw markdown content, atau None jika tidak ditemukan.
-    """
-    if not _is_safe_slug(slug):
-        return None
-
+    # 1. Coba cari berdasarkan nama file langsung
     filepath = os.path.join(POST_DIR, f"{slug}.md")
-    if not os.path.exists(filepath):
-        return None
+    if os.path.exists(filepath):
+        try:
+            post = frontmatter.load(filepath)
+            metadata = post.metadata
+            return {
+                'title': metadata.get('title', 'Untitled'),
+                'slug': metadata.get('slug', slug),
+                'date': str(metadata.get('date', '')),
+                'tags': metadata.get('tags', []),
+                'summary': metadata.get('summary', ''),
+                'content': post.content
+            }
+        except Exception:
+            return None
 
-    try:
-        post = frontmatter.load(filepath)
-        metadata = post.metadata
-        
-        return {
-            'title': metadata.get('title', 'Untitled'),
-            'slug': metadata.get('slug', slug),
-            'date': str(metadata.get('date', '')),
-            'tags': metadata.get('tags', []),
-            'summary': metadata.get('summary', ''),
-            'content': post.content  # Raw markdown
-        }
-    except Exception:
-        return None
+    # 2. Jika nama file berbeda dengan custom slug, cari dari daftar artikel
+    posts = get_all_posts(parse_body=True)
+    for post in posts:
+        if post.get('slug') == slug:
+            return post
+
+    return None

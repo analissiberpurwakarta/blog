@@ -28,6 +28,10 @@ def home():
 
 @app.route('/posts/<slug>')
 def post_detail(slug):
+    # Hilangkan .html jika ada di ujung slug
+    if slug.endswith('.html'):
+        slug = slug[:-5]
+        
     post = get_post_by_slug(slug)
     if not post:
         abort(404)
@@ -37,6 +41,9 @@ def post_detail(slug):
 
 @app.route('/tag/<tag>')
 def tag_posts(tag):
+    if tag.endswith('.html'):
+        tag = tag[:-5]
+        
     all_posts = get_all_posts(parse_body=False)
     filtered_posts = [p for p in all_posts if tag.lower() in [t.lower() for t in p.get('tags', [])]]
     return render_template('tag.html', tag=tag, posts=filtered_posts)
