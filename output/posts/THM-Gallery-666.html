@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tryhackme | Gallery 666 — Analis Siber Purwakarta</title>
+    <link rel="stylesheet" href="/blog/static/css/style.css">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <a href="/blog/" class="brand">Analis Siber Purwakarta</a>
+            <nav>
+                <a href="/blog/">Home</a>
+                <a href="/blog/archive">Archive</a>
+                <a href="/blog/search">Search</a>
+            </nav>
+        </header>
+
+        <main>
+            
+<article class="post-container">
+  <h1 class="article-title">Tryhackme | Gallery 666</h1>
+  <div class="post-meta">16/08/2026</div>
+  <div class="tags mb-1-5">
+    
+    <a href="/blog/tag/TryHackMe.html" class="tag-badge">#TryHackMe</a>
+    
+    <a href="/blog/tag/Capture The Flag (CTF).html" class="tag-badge">#Capture The Flag (CTF)</a>
+    
+    <a href="/blog/tag/Boot2Root.html" class="tag-badge">#Boot2Root</a>
+    
+    <a href="/blog/tag/SQL Injection.html" class="tag-badge">#SQL Injection</a>
+    
+    <a href="/blog/tag/File Upload Vulnerabilities.html" class="tag-badge">#File Upload Vulnerabilities</a>
+    
+  </div>
+
+  <div class="article-body">
+    <h2 id="observasi">Observasi</h2>
+<p>Pada tahap awal pentest, penulis melakukan pemindaian port pada IP target menggunakan Nmap dengan perintah nmap <strong>-sT -sV alamat-target-ctf</strong>. Dari hasil scan, terdeteksi ada tiga port yang terbuka, yaitu port 22 (SSH), port 80 (HTTP), dan port 443 (HTTPS).</p>
+<p>Untuk menggali direktori yang tersembunyi di web server, eksplorasi dilanjutkan dengan teknik directory fuzzing menggunakan FFUF. Menjalankan perintah <strong>ffuf -u http://alamat-target-ctf/gallery/FUZZ -w ./raft-small-directories.txt</strong> yang menghasilkan beberapa lokasi direktori menarik yang potensial untuk dianalisis lebih jauh</p>
+<h2 id="uji-penetrasi">Uji Penetrasi</h2>
+<h3 id="bypass-via-sql-injection">Bypass Via SQL Injection</h3>
+<p>Halaman awal menunjukkan bahwa aplikasi ini menggunakan CMS Simple Image Gallery, yang dari referensi tersebut diketahui memiliki celah kerentanan RCE pada parameter username. Berangkat dari info tersebut, penulis mencoba melakukan pengujian awal pada form login menggunakan teknik SQL Injection. Dengan memasukkan payload <strong>admin ' or 1=1 limit 1-- +</strong> pada kolom username, autentikasi berhasil di-bypass dan masuk ke dalam dasbor admin.</p>
+<h3 id="arbitrary-file-upload">Arbitrary File Upload</h3>
+<p>Setelah berhasil mengakses dasbor admin, ditemukan fitur pengunggahan file (upload). Berdasarkan pengujian, fitur ini tidak memiliki mekanisme validasi maupun penyaringan (filtering) terhadap ekstensi file yang diunggah. Sebagai contoh, kita bisa mengunggah file jenis PHP yang bisa gunakan sebagai payload reverse shell.
+Langkah selanjutnya adalah melakukan koneksi dengan komputer server dengan menggunakan shell yang sebelumnya sudah kita unggah pada halaman upload gambar. Command yang digunakan adalah <strong>ncat -lvnp 4444</strong></p>
+<h3 id="mengakses-database-aplikasi">Mengakses Database Aplikasi</h3>
+<p>Melalui akses reverse shell tadi, kita melanjutkan eksplorasi komputer server. Salah satu direktori yang menarik untuk diperhatikan adalah <strong>/var/www/html/gallery</strong>. Isi dari direktori tersebut terdapat file yang bernama <strong>initialize.php</strong> yang berisi konfigurasi database.</p>
+<p><img alt="Isi file Initialize.php" src="../static/img/gallery-666/isi_file_initialize.png" /></p>
+<p>Diketahui DBMS yang digunakan oleh aplikasi ini adalah MySQL, untuk mengakses DBMS tersebut, dan mengekstrak hash password untuk akun admin bisa kita gunakan command berikut: <strong>mysql -u gallery_user -ppassw0rd321 gallery_db -e "SELECT * FROM users;"</strong></p>
+<p><img alt="Hash Pass Admin" src="../static/img/gallery-666/hash_pass_admin.png" /></p>
+<h3 id="take-over-akun-mike-dan-flag-seksi-pertama">Take Over Akun Mike dan Flag Seksi Pertama</h3>
+<p>Pada room ini, terdapat objektif lain selain mengetahui hash password admin web. Objektif tersebut adalah mendapatkan flag untuk seksi pertama dengan cara mengakses akun komputer server yang bernama Mike.</p>
+<p>Akses direktori <strong>/var/backups/mike_home_backup</strong> kemudian akses .bash_history dengan menggunakan command <strong>cat .bash_history</strong>. Kita akan mendapatkan password untuk akun Mike.</p>
+<p><img alt="Direktori Pass Mike" src="../static/img/gallery-666/direktori_pass_mike.png" /></p>
+<p>Ganti pengguna dengan akun milik Mike dengan command <strong>su mike</strong> dan masukan password yang sebelumnya sudah kita dapatkan. Setelah berhasil mengakses akun milik Mike langkah selanjutnya adalah mendapatkan flag pertama yang disimpan pada home direktori dengan nama file user.txt. Kita cukup mengaksesnya dengan command <strong>cat user.txt</strong></p>
+<p><img alt="Flag Pertama" src="../static/img/gallery-666/flag_1.png" /></p>
+  </div>
+</article>
+
+        </main>
+
+        <footer>
+            &copy; 2026 Analis Siber Purwakarta
+        </footer>
+    </div>
+</body>
+</html>

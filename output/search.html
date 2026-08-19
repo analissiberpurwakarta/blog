@@ -24,42 +24,11 @@
 
 <div class="post-list" id="searchResults"></div>
 
-<script>
-  const searchData = [{"date": "2026-08-06", "slug": "hello-world", "summary": "Artikel pertama di blog Analis Siber Purwakarta.", "tags": ["general", "intro"], "title": "Hello World"}, {"date": "08/08/2026", "slug": "THM-HackerHoliday-TheConciergeKnowsTooMuch", "summary": "Artikel ini membahas room \u201cThe Concierge Knows\u201d dalam event Hacker Holiday 2026 dari TryHackMe. Challenge tersebut berfokus pada teknik social engineering dan prompt injection untuk mengeksploitasi chatbot bernama VERA.", "tags": ["TryHackMe", "Capture The Flag (CTF)", "Prompt Injection", "Social Engineering"], "title": "Tryhackme Hacker Holiday | The Concierge Knows Too Much"}];
-  const baseUrl = "/blog";
-  const input = document.getElementById('searchInput');
-  const resultsDiv = document.getElementById('searchResults');
-
-  function render(items) {
-    if (items.length === 0) {
-      resultsDiv.innerHTML = '<p class="post-summary">Artikel tidak ditemukan.</p>';
-      return;
-    }
-    resultsDiv.innerHTML = items.map(p => `
-      <article class="post-card">
-        <h2 class="post-title"><a href="${baseUrl}/posts/${p.slug}.html">${p.title}</a></h2>
-        <div class="post-meta">${p.date}</div>
-        <p class="post-summary">${p.summary}</p>
-      </article>
-    `).join('');
-  }
-
-  render(searchData);
-
-  input.addEventListener('input', (e) => {
-    const q = e.target.value.toLowerCase().trim();
-    if (!q) {
-      render(searchData);
-      return;
-    }
-    const filtered = searchData.filter(p => 
-      p.title.toLowerCase().includes(q) || 
-      p.summary.toLowerCase().includes(q) ||
-      (p.tags && p.tags.some(t => t.toLowerCase().includes(q)))
-    );
-    render(filtered);
-  });
+<script id="search-data" type="application/json">
+  [{"date": "2026-08-06", "slug": "hello-world", "summary": "Artikel pertama di blog Analis Siber Purwakarta.", "tags": ["general", "intro"], "title": "Hello World"}, {"date": "16/08/2026", "slug": "THM-Gallery-666", "summary": "Artikel ini membahas room CTF Gallery 666 seksi pertama. Room ini berfokus pada teknik bypass halaman login via SQL Injection, dan mengeksploitasi kerentanan File Upload Vulnerabilities. Pada seksi pertama ini juga kita belajar untuk mengambil alih akun komputer server untuk melakukan privileged escalation di seksi kedua nantinya", "tags": ["TryHackMe", "Capture The Flag (CTF)", "Boot2Root", "SQL Injection", "File Upload Vulnerabilities"], "title": "Tryhackme | Gallery 666"}, {"date": "08/08/2026", "slug": "THM-HackerHoliday-TheConciergeKnowsTooMuch", "summary": "Artikel ini membahas room \u201cThe Concierge Knows\u201d dalam event Hacker Holiday 2026 dari TryHackMe. Challenge tersebut berfokus pada teknik social engineering dan prompt injection untuk mengeksploitasi chatbot bernama VERA.", "tags": ["TryHackMe", "Capture The Flag (CTF)", "Prompt Injection", "Social Engineering"], "title": "Tryhackme Hacker Holiday | The Concierge Knows Too Much"}]
 </script>
+
+<script src="/blog/static/js/search.js"></script>
 
         </main>
 

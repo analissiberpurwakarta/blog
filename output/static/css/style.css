@@ -67,7 +67,7 @@ nav a:hover {
 
 .article-title {
     font-size: 2rem;
-    color: #fff;
+    color: #e6f1ff;
     margin-bottom: 0.5rem;
 }
 
@@ -80,6 +80,15 @@ nav a:hover {
 }
 
 /* Post cards */
+.post-container {
+  background-color: #112240;
+  border: 1px solid #233554;
+  border-radius: 10px;
+  padding: 2.5rem;
+  margin-top: 1.5rem;
+  box-shadow: 0 10px 30px -15px rgba(2, 12, 27, 0.7);
+}
+
 .post-lists {
     display: flex;
     flex-direction: column;
@@ -99,28 +108,6 @@ nav a:hover {
 .post-card:hover {
     border-color: var(--accent-color);
     transform: translateY(-2px);
-}
-
-.post-content p, .post-content li {
-  text-align: justify;
-  line-height: 1.5;
-}
-
-.post-content img {
-  max-width: 100%;
-  height: auto;
-  display: block;
-  margin: 1.5rem auto;
-  border-radius: 8px;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
-}
-
-.post-container {
-  background-color: #112240; /* Sedikit lebih terang/beda dari background web (#0a192f) */
-    border: 1px solid #233554;
-    border-radius: 10px;
-    padding: 2rem;
-    margin-top: 1.5rem;
 }
 
 .post-title {
@@ -174,6 +161,26 @@ nav a:hover {
 /* Article Body */
 .article-body {
   margin-top: 1.5rem;
+}
+
+.article-body p, .article-body li {
+  text-align: justify;
+  line-height: 1.8;
+  color: #8892b0;
+  font-size: 1.05rem;
+  margin-bottom: 1.25rem;
+  overflow-wrap: break-word;
+  word-break: break-word;
+}
+
+.article-body img {
+  max-width: 100%;
+  height: auto;
+  display: block;
+  margin: 1.5rem auto;
+  border-radius: 8px;
+  border: 1px solid #233554;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.4);
 }
 
 .article-body h1, .article-body h2, .article-body h3 {
