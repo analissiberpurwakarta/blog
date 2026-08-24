@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tryhackme | Anthem — Analis Siber Purwakarta</title>
+
+    <!-- Standar Meta untuk deskripsi blog (SUDAH DIPERBAIKI) -->
+    <meta name="description" content="Artikel ini membahas room CTF Anthem. Room ini memiliki tema Boot2Root pada sistem operasi Windows.">
+    <meta name="author" content="Analis Siber Purwakarta"/> 
+
+    <!-- Open Graph / Facebook / WhatsApp / LinkedIn / Discord -->
+    <meta property="og:type" content="article">
+    <meta property="og:site_name" content="Analis Siber Purwakarta">
+    <meta property="og:title" content="Tryhackme | Anthem">
+    <meta property="og:description" content="Artikel ini membahas room CTF Anthem. Room ini memiliki tema Boot2Root pada sistem operasi Windows.">
+    <meta property="og:image" content="/blog/static/images/og-default.png">
+
+    <!-- Twitter Cards -->
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="Tryhackme | Anthem">
+    <meta name="twitter:description" content="Artikel ini membahas room CTF Anthem. Room ini memiliki tema Boot2Root pada sistem operasi Windows.">
+
+    <link rel="canonical" href="http://localhost/posts/THM-Anthem">
+
+    <link rel="stylesheet" href="/blog/static/css/style.css">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <a href="/blog/" class="brand">Analis Siber Purwakarta</a>
+            <nav>
+                <a href="/blog/">Home</a>
+                <a href="/blog/archive">Archive</a>
+                <a href="/blog/search">Search</a>
+            </nav>
+        </header>
+
+        <main>
+            
+<article class="post-container">
+  <h1 class="article-title">Tryhackme | Anthem</h1>
+  <div class="post-meta">20/08/2026</div>
+  <div class="tags mb-1-5">
+    
+    <a href="/blog/tag/TryHackMe.html" class="tag-badge">#TryHackMe</a>
+    
+    <a href="/blog/tag/Capture The Flag (CTF).html" class="tag-badge">#Capture The Flag (CTF)</a>
+    
+    <a href="/blog/tag/Boot2Root.html" class="tag-badge">#Boot2Root</a>
+    
+    <a href="/blog/tag/OSINT.html" class="tag-badge">#OSINT</a>
+    
+    <a href="/blog/tag/Windows.html" class="tag-badge">#Windows</a>
+    
+  </div>
+
+  <div class="article-body">
+    <h2 id="seksi-pertama">Seksi Pertama</h2>
+<h3 id="enumerasi-port-dan-enumerasi-teknologi-website">Enumerasi Port dan Enumerasi Teknologi Website</h3>
+<p>Proses enumerasi port yang dilakukan untuk mengetahui service apa saja yang dijalankan oleh server dapat dilakukan melalui command <strong>nmap -sT -sV alamat_ip</strong>. Diketahui terdapat dua port yang terbuka pada server, yaitu Port 80 (HTTP), dan Port 3389 (RDP). Port 3389 akan kita simpan untuk seksi ketiga.</p>
+<p><img alt="Observasi menggunakan Nmap" src="../static/img/anthem/1.png" /></p>
+<p>Aplikasi ini bernama <strong>anthem.com</strong>, bila kita mengakses direktori <strong>/robots.txt</strong> diketahui bahwa aplikasi menggunakan CMS Umbraco. File tersebut juga menjelaskan terdapat halaman admin pada direktori <strong>/umbarco/</strong> dengan password yang terdapat pada kalimat awal file. </p>
+<p><img alt="Isi file /robots.txt" src="../static/img/anthem/2.png" /></p>
+<h3 id="mencari-nama-administrator-melalui-osint">Mencari Nama Administrator Melalui OSINT</h3>
+<p>Untuk mencari nama Administrator website ini, kita bisa melakukannya dengan teknik OSINT sederhana. Misalkan, bila kita mengakses halaman <strong>/we-are-hiring/</strong> dan memperhatikan nama seorang author kita bisa mengetahui bahwa format email yang digunakan adalah singkatan dari nama pertama dan nama belakang. Sebagai contoh Author dengan nama Jane Doe memiliki email <strong>JD@anthem.com</strong>.</p>
+<p>Bila mengakses halaman <strong>/a-cheers-to-our-it-department/</strong> kita akan mendapati sebuah puisi karya Solomon Grundy yang didekisasikan untuk Administrator. Kita bisa mengasumsikan bahwa nama Administrator adalah <strong>Solomon Grundy</strong>, selain itu melihat pola penamaan email maka kita bisa mengetahui kalau alamat email Administrator adalah <strong>SG@anthem.com</strong>.</p>
+<p>Bila kita uji hipotesis tersebut menggunakan password yang ditemukan pada file robots.txt, dan email yang didapatkan pada tahap ini kita bisa mengakses halaman administrator website anthem. Kita bisa menyimpan akronim administror <strong>"SG"</strong>, dan password dari file robots.txt yang didapatkan sebelumnya untuk koneksi RDP.</p>
+<p><img alt="Halaman Admin" src="../static/img/anthem/3.png" /></p>
+<h2 id="seksi-kedua">Seksi Kedua</h2>
+<p>Pada seksi kedua ini kita akan mencari flag yang disembunyikan diantara tag-tag HTML, ataupun secara gamblang ditampilkan pada sebuah halaman tertentu. Untuk mendapatkannya kita bisa membuka developer console pada browser yang kita gunakan.</p>
+<p>Flag pertama, dan ada di halaman <strong>/archive/we-are-hiring/</strong> lebih tepatnya terdapat pada header html bagian meta tag. Begitupula untuk flag keempat, kita bisa mendapatkannya pada halaman <strong>/a-cheers-to-our-it-department/</strong>. Flag ketiga dapat ditemui pada halaman <strong>/authors/</strong>, dan flag kedua terdapat pada tag input turunan dari class menu tag nav.</p>
+<p><img alt="Flag Ketiga" src="../static/img/anthem/4.png" /></p>
+<h2 id="seksi-ketiga">Seksi Ketiga</h2>
+<p>Seksi ketiga dimulai dengan melakukan koneksi ke server menggunakan Remote Desktop Protocol (RDP). Pada Windows, koneksi dapat dilakukan menggunakan aplikasi RDP bawaan. Masukan alamat IP server, username, dan password untuk memulai sesi.</p>
+<p><img alt="Koneksi RDP" src="../static/img/anthem/5.png" /></p>
+<p>Setelah berhasil terhubung ke server, flag pertama pada seksi ini dapat ditemukan di direktori Desktop.</p>
+<p><img alt="Flag Pertama Seksi Ketiga" src="../static/img/anthem/6.png" /></p>
+<h3 id="privilege-escalation">Privilege Escalation</h3>
+<p>Untuk mendapatkan hak akses Administrator, diperlukan pencarian terhadap file tersembunyi yang terdapat pada server. Untuk menampilkan file tersembunyi, buka opsi View pada Ribbon, kemudian aktifkan Hidden items.</p>
+<p>Setelah item tersembunyi ditampilkan, akses direktori <strong>C:</strong> terdapat sebuah folder benama backup yang berisi file bernama <strong>restore</strong>. Namun user SG belum memiliki izin untuk membaca file tersebut. Oleh karena itu, permission pada file perlu disesuaikan agar user SG memperoleh akses.</p>
+<p><img alt="Isi folder backup" src="../static/img/anthem/7.png" /></p>
+<p>Untuk menambahkan permission, klik kanan file restore, kemudian pilih Properties → Security → Edit/Add. Pada bagian Enter the object names, masukkan SG, lalu pilih Check Names dan klik OK. Setelah permission berhasil ditambahkan, user SG dapat mengakses file tersebut dan proses privilege escalation dapat dilanjutkan.</p>
+<p><img alt="Menambahkan permission untuk akun SG" src="../static/img/anthem/8.png" /></p>
+<p>Setelah permission berhasil ditambahkan, file restore dapat diakses dan berisi password untuk akun Administrator. Password tersebut kemudian dapat digunakan untuk melakukan login menggunakan akun Administrator.</p>
+<p><img alt="Password Administrator" src="../static/img/anthem/9.png" /></p>
+<p>Setelah berhasil masuk sebagai Administrator, akses direktori Desktop untuk menemukan flag terakhir pada room ini</p>
+<p><img alt="Flag Terakhir" src="../static/img/anthem/11.png" /></p>
+  </div>
+</article>
+
+        </main>
+
+        <footer>
+            &copy; 2026 Analis Siber Purwakarta
+        </footer>
+    </div>
+</body>
+</html>

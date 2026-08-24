@@ -5,21 +5,21 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{% block title %}Analis Siber Purwakarta{% endblock %}</title>
 
-    <!-- Standar Meta untuk deskripsi blog -->
-    <meta name="description" content="{% block meta_description %}{{ post.summary if post.summary else 'A blog documenting technologies, deep-dive investigations into vulnerabilities, current CVEs, and capture-the-flag solutions—crafted for security practitioners who value accuracy and clarity'}}{% endblock %}">
+    <!-- Standar Meta untuk deskripsi blog (SUDAH DIPERBAIKI) -->
+    <meta name="description" content="{% block meta_description %}{{ post.summary if (post is defined and post and post.summary) else 'A blog documenting technologies, deep-dive investigations into vulnerabilities, current CVEs, and capture-the-flag solutions—crafted for security practitioners who value accuracy and clarity' }}{% endblock %}">
     <meta name="author" content="Analis Siber Purwakarta"/> 
 
     <!-- Open Graph / Facebook / WhatsApp / LinkedIn / Discord -->
-    <meta property="og:type" content="{% if post %}article{% else %}website{% endif %}">
+    <meta property="og:type" content="{% if post is defined and post %}article{% else %}website{% endif %}">
     <meta property="og:site_name" content="Analis Siber Purwakarta">
-    <meta property="og:title" content="{% block og_title %}{{ post.title if post else 'Analis Siber Purwakarta' }}{% endblock %}">
-    <meta property="og:description" content="{% block og_description %}{{ post.summary if post and post.summary else ''A blog documenting technologies, deep-dive investigations into vulnerabilities, current CVEs, and capture-the-flag solutions—crafted for security practitioners who value accuracy and clarity' }}{% endblock %}">
+    <meta property="og:title" content="{% block og_title %}{{ post.title if (post is defined and post and post.title) else 'Analis Siber Purwakarta' }}{% endblock %}">
+    <meta property="og:description" content="{% block og_description %}{{ post.summary if (post is defined and post and post.summary) else 'A blog documenting technologies, deep-dive investigations into vulnerabilities, current CVEs, and capture-the-flag solutions—crafted for security practitioners who value accuracy and clarity' }}{% endblock %}">
     <meta property="og:image" content="{{ base_url|default('') }}/static/images/og-default.png">
 
     <!-- Twitter Cards -->
     <meta name="twitter:card" content="summary_large_image">
-    <meta name="twitter:title" content="{% block twitter_title %}{{ post.title if post else 'Analis Siber Purwakarta' }}{% endblock %}">
-    <meta name="twitter:description" content="{% block twitter_description %}{{ post.summary if post and post.summary else ''A blog documenting technologies, deep-dive investigations into vulnerabilities, current CVEs, and capture-the-flag solutions—crafted for security practitioners who value accuracy and clarity' }}{% endblock %}">
+    <meta name="twitter:title" content="{% block twitter_title %}{{ post.title if (post is defined and post and post.title) else 'Analis Siber Purwakarta' }}{% endblock %}">
+    <meta name="twitter:description" content="{% block twitter_description %}{{ post.summary if (post is defined and post and post.summary) else 'A blog documenting technologies, deep-dive investigations into vulnerabilities, current CVEs, and capture-the-flag solutions—crafted for security practitioners who value accuracy and clarity' }}{% endblock %}">
 
     <link rel="canonical" href="{{ request.url if request else base_url|default('') }}">
 
@@ -37,11 +37,11 @@
         </header>
 
         <main>
-            {% block content%}{% endblock %}
+            {% block content %}{% endblock %}
         </main>
 
         <footer>
-            &copy; {{ 2026 }} Analis Siber Purwakarta
+            &copy; 2026 Analis Siber Purwakarta
         </footer>
     </div>
 </body>

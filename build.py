@@ -9,6 +9,7 @@ OUTPUT_DIR = os.path.join(os.path.dirname(__file__), 'output')
 
 # Jika di-deploy ke GitHub Pages dengan repo bernama 'blog', isi BASE_URL = '/blog'
 # Jika repo di-rename menjadi 'analissiberpurwakarta.github.io', isi BASE_URL = ''
+SITE_DOMAIN = os.getenv('SITE_DOMAIN', 'https://analissiberpurwakarta.github.io')
 BASE_URL = os.getenv('BASE_URL', '/blog')
 
 def clean_output_dir():
@@ -60,9 +61,9 @@ def generate_sitemap(posts, tags):
     today = datetime.now().strftime('%Y-%m-%d')
 
     main_routes = [
-        ('', '1.0')
-        ('/archive.html', '0.8')
-        ('/search.html', '0.5')
+        ('', '1.0'),
+        ('/archive.html', '0.8'),
+        ('/search.html', '0.5'),
     ]
 
     for route, priority in main_routes:

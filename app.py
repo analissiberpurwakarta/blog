@@ -1,6 +1,7 @@
-from flask import Flask, render_template, abort, request, make_response
+from flask import Flask, render_template, abort, request, make_response, send_from_directory
 from utils.loader import get_all_posts, get_post_by_slug
 from utils.parser import render_markdown
+import os
 
 app = Flask(__name__)
 
@@ -61,6 +62,16 @@ def search():
 @app.errorhandler(404)
 def page_not_found(e):
     return render_template('404.html'), 404
+
+@app.route('/robots.txt')
+def robots():
+    output_dir = os.path.join(os.path.dirname(__file__), 'output')
+    return send_from_directory(output_dir, 'robots.txt')
+
+@app.route('/sitemap.xml')
+def sitemap():
+    output_dir = os.path.join(os.path.dirname(__file__), 'output')
+    return send_from_directory(output_dir, 'sitemap.xml', mimetype='application/xml')
 
 if __name__ == '__main__':
     app.run(debug=True, port=5000)
