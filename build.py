@@ -1,5 +1,7 @@
 import os
 import shutil
+import xml.etree.ElementTree as ET
+from datetime import datetime
 from app import app
 from utils.loader import get_all_posts
 
@@ -35,6 +37,64 @@ def save_html(path: str, content: str):
     with open(target_file, 'w', encoding='utf-8') as f:
         f.write(content)
     print(f"  [+] Generated: {os.path.relpath(target_file, OUTPUT_DIR)}")
+
+# Generate Robots
+def generate_robots_txt():
+    robots_path = os.path.join(OUTPUT_DIR, 'robots.txt')
+    sitemap_url = f"{SITE_DOMAIN}{BASE_URL}/sitemap.xml"
+
+    content = f"""User-agent: *
+    Allow: /
+
+    Sitemap: {sitemap_url}
+    """
+
+    with open(robots_path, 'w', encoding='utf-8') as f:
+        f.write(content.strip())
+    print(" [+] Generated: robots.txt")
+
+# Generate sitemap
+def generate_sitemap(posts, tags):
+    urlset = ET.Element('urlset', xmlns="http://www.sitemaps.org/schemas/sitemap/0.9")
+    base_site_url = f"{SITE_DOMAIN}{BASE_URL}"
+    today = datetime.now().strftime('%Y-%m-%d')
+
+    main_routes = [
+        ('', '1.0')
+        ('/archive.html', '0.8')
+        ('/search.html', '0.5')
+    ]
+
+    for route, priority in main_routes:
+        url_elem = ET.SubElement(urlset, 'url')
+        ET.SubElement(url_elem, 'loc').text = f"{base_site_url}{route}"
+        ET.SubElement(url_elem, 'lastmod').text = today
+        ET.SubElement(url_elem, 'priority').text = priority
+
+    for post in posts:
+        slug = post.get('slug')
+        post_date = str(post.get('date', today))
+        
+        url_elem = ET.SubElement(urlset, 'url')
+        ET.SubElement(url_elem, 'loc').text = f"{base_site_url}/posts/{slug}.html"
+        ET.SubElement(url_elem, 'lastmod').text = post_date if post_date else today
+        ET.SubElement(url_elem, 'priority').text = '0.9'
+
+    for tag in tags:
+        url_elem = ET.SubElement(urlset, 'url')
+        ET.SubElement(url_elem, 'loc').text = f"{base_site_url}/tag/{tag}.html"
+        ET.SubElement(url_elem, 'lastmod').text = today
+        ET.SubElement(url_elem, 'priority').text = '0.6'
+
+    tree = ET.ElementTree(urlset)
+    ET.indent(tree, space=" ", level=0)
+
+    sitemap_path = os.path.join(OUTPUT_DIR, 'sitemap.xml')
+    with open(sitemap_path, 'wb') as f:
+        f.write(b'<?xml version="1.0" encoding="UTF-8"?>\n')
+        tree.write(f, encoding='utf-8', xml_declaration=False)
+
+    print(" [+] Generated: sitemap.xml")
 
 def build_static_site():
     print("[*] Starting static site generation...")
@@ -82,6 +142,9 @@ def build_static_site():
             save_html('/404', res.get_data(as_text=True))
         else:
             print(f"  [!] GAGAL generate 404.html — status: {res.status_code}")
+
+    generate_robots_txt()
+    generate_sitemap(posts, all_tags)
 
     print("\n[✔] Build complete! Static files generated in 'output/' directory.")
 
