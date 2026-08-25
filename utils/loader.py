@@ -2,15 +2,27 @@ import os
 import glob
 import frontmatter
 from werkzeug.utils import secure_filename
+from datetime import datetime
 
 POST_DIR = os.path.join(os.path.dirname(os.path.dirname(__file__)), 'posts')
 
+def _parse_date(date_str: str) -> datetime:
+    if not date_str:
+        return datetime.min
+
+    try:
+        return datetime.strptime(date_str, "%Y-%m-%d")
+    except ValueError:
+        pass
+
+    try:
+        return datetime.strptime(date_str, "%d/%m/%Y")
+    except ValueError:
+        pass
+
+    return datetime.min
+
 def _is_safe_slug(slug: str) -> bool:
-    """ 
-    Validasi kemanan slug untuk mencegah Path Traversal
-    Memeriksa apakah slug yang dibersihkan sama dengan slug asli
-    dan memastikan file tetap berada di dalam POST_DIR 
-    """
     cleaned_slug = secure_filename(slug)
     if not cleaned_slug or cleaned_slug != slug:
         return False
@@ -20,12 +32,6 @@ def _is_safe_slug(slug: str) -> bool:
     return target_path.startswith(os.path.abspath(POST_DIR))
 
 def get_all_posts(parse_body: bool = False) -> list[dict]:
-    """ 
-    Mengambil semua artikel dari folder posts/
-    - Jika parse_body=False: Hanya membaca metadata (cocok untuk Home / Archive / Tag page).
-    - Menambahkan fallback 'slug' dari nama file jika tidak diisi di front matter.
-    - Mengurutkan artikel dari tanggal terbaru ke terlama. 
-    """
     posts = []
     pattern = os.path.join(POST_DIR, '*.md')
     files = glob.glob(pattern)
@@ -58,7 +64,7 @@ def get_all_posts(parse_body: bool = False) -> list[dict]:
             # Mengabaikan file yang gagal di-unggah/corrupt
             continue
 
-    posts.sort(key=lambda x: x['date'], reverse = True)
+    posts.sort(key=lambda x: _parse_date(x.get('date', '')), reverse = True)
     return posts
 
 def get_post_by_slug(slug: str) -> dict | None:

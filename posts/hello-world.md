@@ -1,7 +1,7 @@
 ---
 title: Hello World
 slug: hello-world
-date: 2026-08-06
+date: 06/08/2026
 tags:
   - general
   - intro
