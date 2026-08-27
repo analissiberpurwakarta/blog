@@ -203,6 +203,11 @@ header {
   margin-bottom: 1.25rem;
 }
 
+.giscus-wraper {
+  margin-top: 3rem; 
+  min-height: 150px;
+}
+
 /* Code Blocks */
 pre {
   background-color: var(--bg-code);

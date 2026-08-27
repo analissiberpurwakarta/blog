@@ -29,7 +29,12 @@
     <div class="container">
         <header>
             <a href="/blog/" class="brand">Analis Siber Purwakarta</a>
-            <nav>
+            <button id="menuToggle" class="menu-toggle" aria-label="Toggle navigation">
+                <span></span>
+                <span></span>
+                <span></span>
+            </button>
+            <nav id="navMenu" class="nav-menu">
                 <a href="/blog/">Home</a>
                 <a href="/blog/archive">Archive</a>
                 <a href="/blog/search">Search</a>
@@ -77,6 +82,14 @@ Langkah selanjutnya adalah melakukan koneksi dengan komputer server dengan mengg
 <p>Ganti pengguna dengan akun milik Mike dengan command <strong>su mike</strong> dan masukan password yang sebelumnya sudah kita dapatkan. Setelah berhasil mengakses akun milik Mike langkah selanjutnya adalah mendapatkan flag pertama yang disimpan pada home direktori dengan nama file user.txt. Kita cukup mengaksesnya dengan command <strong>cat user.txt</strong></p>
 <p><img alt="Flag Pertama" src="../static/img/gallery-666/flag_1.png" /></p>
   </div>
+
+  <div class="giscus-wrapper">
+    <script src="https://giscus.app/client.js" data-repo="analissiberpurwakarta/blog" data-repo-id="R_kgDOTuVy2A"
+      data-category="General" data-category-id="DIC_kwDOTuVy2M4DETLx" data-mapping="pathname" data-strict="0"
+      data-reactions-enabled="1" data-emit-metadata="0" data-input-position="bottom" data-theme="cobalt" data-lang="en"
+      crossorigin="anonymous" async>
+      </script>
+  </div>
 </article>
 
         </main>
@@ -85,5 +98,6 @@ Langkah selanjutnya adalah melakukan koneksi dengan komputer server dengan mengg
             &copy; 2026 Analis Siber Purwakarta
         </footer>
     </div>
+    <script src="/blog/static/js/main.js"></script>
 </body>
 </html>

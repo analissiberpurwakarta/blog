@@ -1,6 +1,7 @@
 import os
 import glob
 import frontmatter
+import re
 from werkzeug.utils import secure_filename
 from datetime import datetime
 
@@ -31,6 +32,28 @@ def _is_safe_slug(slug: str) -> bool:
     target_path = os.path.abspath(os.path.join(POST_DIR, f"{slug}.md"))
     return target_path.startswith(os.path.abspath(POST_DIR))
 
+def _secure_extenal_links(content: str) -> str:
+    if not content:
+        return content
+
+    def replace_link(match):
+        full_tag = match.group(0)
+        href = match.group(1)
+
+        if href.startswith('/') or href.startswith('#') or 'analissiberpurwakarta.github.io' in href or '127.0.0.1' in href:
+            return full_tag
+
+        new_tag = full_tag
+        if 'target=' not in new_tag:
+            new_tag = new_tag.replace('<a ', '<a target="_blank" ')
+        if 'rel=' not in new_tag:
+            new_tag = new_tag.replace('<a ', '<a rel="noopener noreferrer" ')
+
+        return new_tag
+
+    pattern = r'<a\s+[^>]*href=["\'](https?://[^"\']+)["\'][^>]*>'
+    return re.sub(pattern, replace_link, content, flags=re.IGNORECASE)
+
 def get_all_posts(parse_body: bool = False) -> list[dict]:
     posts = []
     pattern = os.path.join(POST_DIR, '*.md')
@@ -57,7 +80,7 @@ def get_all_posts(parse_body: bool = False) -> list[dict]:
             }
 
             if parse_body:
-                item['content'] = post.content
+                item['content'] = _secure_extenal_links(post.content)
 
             posts.append(item)
         except Exception as e:
@@ -80,7 +103,7 @@ def get_post_by_slug(slug: str) -> dict | None:
                 'date': str(metadata.get('date', '')),
                 'tags': metadata.get('tags', []),
                 'summary': metadata.get('summary', ''),
-                'content': post.content
+                'content': _secure_extenal_links(post.content)
             }
         except Exception:
             return None

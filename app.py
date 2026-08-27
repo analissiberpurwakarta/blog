@@ -14,9 +14,11 @@ def apply_security_headers(response):
     response.headers['Referrer-Policy'] = 'strict-origin-when-cross-origin'
     response.headers['Content-Security-Policy'] = (
         "default-src 'self'; "
-        "style-src 'self'"
-        "script-src 'self' 'unsafe-inline'; "
-        "img-src 'self' data:;"
+        "script-src 'self' 'unsafe-inline' https://giscus.app; "
+        "style-src 'self' 'unsafe-inline' https://giscus.app; "
+        "frame-src 'self' https://giscus.app; "
+        "connect-src 'self' https://giscus.app; "
+        "img-src 'self' data: https:;"
     )
     return response
 

@@ -29,7 +29,12 @@
     <div class="container">
         <header>
             <a href="/blog/" class="brand">Analis Siber Purwakarta</a>
-            <nav>
+            <button id="menuToggle" class="menu-toggle" aria-label="Toggle navigation">
+                <span></span>
+                <span></span>
+                <span></span>
+            </button>
+            <nav id="navMenu" class="nav-menu">
                 <a href="/blog/">Home</a>
                 <a href="/blog/archive">Archive</a>
                 <a href="/blog/search">Search</a>
@@ -79,6 +84,14 @@
 <p>Room ini memberikan pemahaman mengenai kerentanan prompt injection pada chatbot yang disebabkan oleh minimnya validasi input pada sistem. Penggunaan enkoding Base64 terbukti dapat mengelabui filter awal (filter evasion) untuk mengeksploitasi sistem hingga memicu kebocoran data sensitif, seperti daftar tamu VIP.</p>
 <p>Selain itu, room ini juga memperlihatkan kelemahan  pada sistem prompt yang tidak dilengkapi mekanisme autentikasi dan otorisasi yang ketat. Kelemahan ini memungkinkan terjadinya penyamaran identitas (impersonation), dan prompt extraction yang membocorkan data rahasia internal kepada publik.</p>
   </div>
+
+  <div class="giscus-wrapper">
+    <script src="https://giscus.app/client.js" data-repo="analissiberpurwakarta/blog" data-repo-id="R_kgDOTuVy2A"
+      data-category="General" data-category-id="DIC_kwDOTuVy2M4DETLx" data-mapping="pathname" data-strict="0"
+      data-reactions-enabled="1" data-emit-metadata="0" data-input-position="bottom" data-theme="cobalt" data-lang="en"
+      crossorigin="anonymous" async>
+      </script>
+  </div>
 </article>
 
         </main>
@@ -87,5 +100,6 @@
             &copy; 2026 Analis Siber Purwakarta
         </footer>
     </div>
+    <script src="/blog/static/js/main.js"></script>
 </body>
 </html>
