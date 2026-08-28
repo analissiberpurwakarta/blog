@@ -30,8 +30,13 @@ def _is_safe_slug(slug: str) -> bool:
 
     # Verifikasi path agar tidak keluar dari directory POSTS_DIR
     target_path = os.path.abspath(os.path.join(POST_DIR, f"{slug}.md"))
-    return target_path.startswith(os.path.abspath(POST_DIR))
-
+    try:
+        from pathlib import Path
+        Path(target_path).relative_to(os.path.abspath(POST_DIR))
+    except ValueError:
+        return False
+    return True
+    
 def _secure_extenal_links(content: str) -> str:
     if not content:
         return content
@@ -91,24 +96,26 @@ def get_all_posts(parse_body: bool = False) -> list[dict]:
     return posts
 
 def get_post_by_slug(slug: str) -> dict | None:
-    # 1. Coba cari berdasarkan nama file langsung
+    if not _is_safe_slug(slug):
+        return None
+
     filepath = os.path.join(POST_DIR, f"{slug}.md")
     if os.path.exists(filepath):
         try:
             post = frontmatter.load(filepath)
             metadata = post.metadata
             return {
-                'title': metadata.get('title', 'Untitled'),
-                'slug': metadata.get('slug', slug),
-                'date': str(metadata.get('date', '')),
+                'title':metadata.get('title', 'Untitled'),
+                'slug':metadata.get('slug', slug),
+                'date':str(metadata.get('date', '')),
                 'tags': metadata.get('tags', []),
                 'summary': metadata.get('summary', ''),
                 'content': _secure_extenal_links(post.content)
             }
-        except Exception:
+        except Exception as e:
+            print(f"[WARNING] Gagal load post '{slug}': {e}")
             return None
 
-    # 2. Jika nama file berbeda dengan custom slug, cari dari daftar artikel
     posts = get_all_posts(parse_body=True)
     for post in posts:
         if post.get('slug') == slug:

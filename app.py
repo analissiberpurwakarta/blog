@@ -76,4 +76,7 @@ def sitemap():
     return send_from_directory(output_dir, 'sitemap.xml', mimetype='application/xml')
 
 if __name__ == '__main__':
-    app.run(debug=True, port=5000)
+    app.run(
+        debug=os.getenv('FLASK_DEBUG', 'false').lower() == 'TRUE',
+        port=int(os.getenv('PORT', 5000))
+    )
