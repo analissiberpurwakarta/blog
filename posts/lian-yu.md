@@ -1,8 +1,7 @@
 ---
 title: Tryhackme | Lian Yu
-slug: THM-Lian Yu
+slug: THM-Lian-Yu
 date: 13/09/2026
-
 tags:
     - TryHackme
     - Capture The Flag (CTF)

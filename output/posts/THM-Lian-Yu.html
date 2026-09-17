@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tryhackme | Lian Yu — Analis Siber Purwakarta</title>
+
+    <!-- Standar Meta untuk deskripsi blog (SUDAH DIPERBAIKI) -->
+    <meta name="description" content="Artikel ini membahas room Boot2Root dari TryHackMe yang berjudul Lian Yu. Room ini berfokus pada directory fuzzing web, hingga mencari kredensial yang disembunyikan melalui teknik steganography. Akhir dari room ini peretas harus mampu mengakses akun root untuk membaca flag terakhir dari tantangan ini.">
+    <meta name="author" content="Analis Siber Purwakarta"/> 
+
+    <!-- Open Graph / Facebook / WhatsApp / LinkedIn / Discord -->
+    <meta property="og:type" content="article">
+    <meta property="og:site_name" content="Analis Siber Purwakarta">
+    <meta property="og:title" content="Tryhackme | Lian Yu">
+    <meta property="og:description" content="Artikel ini membahas room Boot2Root dari TryHackMe yang berjudul Lian Yu. Room ini berfokus pada directory fuzzing web, hingga mencari kredensial yang disembunyikan melalui teknik steganography. Akhir dari room ini peretas harus mampu mengakses akun root untuk membaca flag terakhir dari tantangan ini.">
+    <meta property="og:image" content="/blog/static/images/og-default.png">
+
+    <!-- Twitter Cards -->
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="Tryhackme | Lian Yu">
+    <meta name="twitter:description" content="Artikel ini membahas room Boot2Root dari TryHackMe yang berjudul Lian Yu. Room ini berfokus pada directory fuzzing web, hingga mencari kredensial yang disembunyikan melalui teknik steganography. Akhir dari room ini peretas harus mampu mengakses akun root untuk membaca flag terakhir dari tantangan ini.">
+
+    <link rel="canonical" href="http://localhost/posts/THM-Lian-Yu">
+
+    <link rel="stylesheet" href="/blog/static/css/style.css">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <a href="/blog/" class="brand">Analis Siber Purwakarta</a>
+            <button id="menuToggle" class="menu-toggle" aria-label="Toggle navigation">
+                <span></span>
+                <span></span>
+                <span></span>
+            </button>
+            <nav id="navMenu" class="nav-menu">
+                <a href="/blog/">Home</a>
+                <a href="/blog/archive">Archive</a>
+                <a href="/blog/search">Search</a>
+            </nav>
+        </header>
+
+        <main>
+            
+<article class="post-container">
+  <h1 class="article-title">Tryhackme | Lian Yu</h1>
+  <div class="post-meta">13/09/2026</div>
+  <div class="tags mb-1-5">
+    
+    <a href="/blog/tag/TryHackme.html" class="tag-badge">#TryHackme</a>
+    
+    <a href="/blog/tag/Capture The Flag (CTF).html" class="tag-badge">#Capture The Flag (CTF)</a>
+    
+    <a href="/blog/tag/Boot2Root.html" class="tag-badge">#Boot2Root</a>
+    
+    <a href="/blog/tag/Steganography.html" class="tag-badge">#Steganography</a>
+    
+    <a href="/blog/tag/Linux.html" class="tag-badge">#Linux</a>
+    
+  </div>
+
+  <div class="article-body">
+    <h2>Seksi Pertama</h2>
+<h3>Enumerasi Port Service</h3>
+<p>Langkah awal untuk memulai room ini adalah melakukan enumerasi port apa saja yang terbuka. Dengan menggunakan NMap melalui command <strong>nmap -sC -sV alamat IP room</strong> diketahui bahwa port 21 untuk FTP, dan port 22 untuk SSH. Akses untuk kedua layanan tersebut memerlukan kredensial yang harus kita cari terlebih dahulu.</p>
+<p><img alt="Enumerasi Port Service" src="../static/img/lian-yu/1.png"></p>
+<h3>Enumerasi Direktori Web</h3>
+<p>Proses enumerasi untuk mencari direktori web ini terdiri dari tiga tahapan. Tahapan pertama, kita harus mencari direktori kunci untuk direktori selanjutnya. </p>
+<p>Dengan menggunakan command <strong>ffuf -u http://alamat-ip-room/FUZZ -w ./raft-small-directories.txt</strong> kita mengetahui terdapat halaman dengan judul <strong>island</strong>. Pada halaman ini bila kita memeriksa elemen HTML, kita dapat mendapatkan satu kredensial <strong>vigilante</strong>. Simpan kredensial itu untuk nanti.</p>
+<p><img alt="Direktori Island" src="../static/img/lian-yu/2.png"></p>
+<p>Bila kita perhatikan hint untuk direktori kedua, direktori tersebut memiliki nama yang menggunakan angka. Kita coba generate angka 1-2500 melalui command powershell <strong>1..2500 | Out-File numbers.txt</strong> dan melakukan fuzzing direktori tersebut dengan menggunakan command FFUF <strong>ffuf -u http://alamat-ip-room/island/FUZZ -w ./numbers.txt</strong>. Kita akan mendapatkan direktori 2100, isi dari direktori tersebut berupa hint untuk direktori ketiga yang terdapat pada tag komentar html.</p>
+<p>Komentar pada direktori 2100 memberikan kita clue agar melakukan directory fuzzing untuk file extension yang berformat .ticket. Kita bisa melakukan melalui command <strong>ffuf -u http://alamat-ip-room/island/2100/FUZZ -w ./directory-list-2.3-small.txt -e .ticket</strong>. Kita akan mendapatkan kredensial kedua yaitu <strong>RTy8yhBQdscX</strong> yang disandikan menggunakan format base58.</p>
+<p><img alt="Direktori ketiga" src="../static/img/lian-yu/3.png"></p>
+<h2>Seksi Kedua</h2>
+<h3>FTP &amp; Steganography</h3>
+<p>Pada seksi pertama kita mendapatkan sebuah kredensial yang dapat digunakan untuk mengakses FTP. Namun sebelum menggunakan kredensial tersebut kita harus terjemahkan password <strong>RTy8yhBQdscX</strong> yang sebelumnya disandikan. Dengan menggunakan tools seperti CyberChef, kita mengetahui bahwa password kredensial yang sebenarnya adalah <strong>!#th3h00d</strong>.</p>
+<p><img alt="Krdensial FTP" src="../static/img/lian-yu/6.png"></p>
+<p>Dengan menggunakan username <strong>vigilante</strong> dan password <strong>!#th3h00d</strong> kita terhubung melalui FTP. Bila kita menggunakan command <strong>ls -la</strong> kita akan mendapatkan beberapa file gambar berformat .png dan file .other_user yang berisi kredensial untuk SSH. Kita unduh file-file tersebut menggunakan command <strong>get</strong>.</p>
+<p><img alt="Akses FTP" src="../static/img/lian-yu/7.png"></p>
+<p>Dari ketiga gambar yang diunduh hanya dua gambar saja yang memiliki kredensial didalamnya karena menggunakan teknik steganography. Gambar pertama adalah aa.png, dan yang kedua adalah leave_me_alone.png. </p>
+<p>Pada gambar leave_me_alone.png kita perlu memperbaiki header png. Untuk memperbaiki header, kita bisa menggunakan tools seperti <strong>hexed.it</strong> atau text editor biasa. Rubah header yang semula bernilai <strong>58 45 6F AE 0A 0D</strong> menjadi <strong>89 50 4E 47 0D 0A</strong> kemudian simpan dengan nama file baru.</p>
+<p><img alt="Memperbaiki Header PNG" src="../static/img/lian-yu/8.png"></p>
+<p>Hasil dari perbaikan header tersebut kita mendapatkan kredensial <strong>password</strong> yang terdapat pada teks didalam gambar.  Kredensial itu kita gunakan sebagai passphrase untuk mengekstrak informasi pada foto aa.jpg.</p>
+<p>Untuk mengekstrak informasi pada foto aa.jpg kita akan menggunakan tools steghide. Command yang digunakan <strong>./steghide.exe extract -sf aa.jpg</strong>. Pada tahap ini kita akan mendapatkan file <strong>shado</strong> yang berisi password <strong>M3tahuman</strong> yang akan gunakan untuk koneksi ssh </p>
+<p><img alt="Memperbaiki Header PNG" src="../static/img/lian-yu/9.png"></p>
+<h2>Seksi Ketiga</h2>
+<h3>SSH dan Boot2Root</h3>
+<h4>Flag Pertama</h4>
+<p>File .other_user mengisyaratkan kita bahwa akun yang digunakan untuk melakukan koneksi via ssh adalah <strong>slade</strong> maka untuk koneksi ssh kita akan menggunakan command <strong>ssh slade@alamat-ip-room</strong> dan masukan password <strong>M3tahuman</strong> yang sebelumnya kita dapatkan.</p>
+<p>Ketika kita sudah berhasil tekoneksi pada komputer server melalui SSH, kita harus memeriksa apa saja isi dari direktori pertama. Command yang digunakan untuk memeriksa adalah <strong>ls -la</strong>, kita akan mendapatkan file user.txt untuk flag pertama, buka file tersebut dengan command <strong>cat user.txt</strong>.</p>
+<h4>Flag Kedua</h4>
+<p>Hardix (2025) menjelaskan untuk mendapatkan akses root dan flag kedua setidaknya kita harus memeriksa apa saja yang bisa dilakukan/hak apa saja yang dimiliki oleh akun <strong>slade</strong>. Melalui command <strong>sudo -l</strong> kita mengetahui bahwa user <strong>slade</strong> dapat mengeksekusi command <strong>pkexec</strong>.</p>
+<p>Melalui command <strong>pkexec</strong> mengizinkan pengguna untuk mengeksekusi command sebagai pengguna lain. Kita dapat memanfaatkannya untuk membuka akses root shell secara langsung.</p>
+<p>Menggunakan command <strong>sudo pkexec /bin/bash</strong> kita dapat mengakses root dan mencari flag kedua. melalui perintah <strong>ls -al</strong>. Flag kedua terdapat pada file <strong>root.txt</strong> kita cukup membacanya melalui command <strong>cat root.txt</strong></p>
+<p><img alt="Memperbaiki Header PNG" src="../static/img/lian-yu/10.png"></p>
+<h2>Referensi</h2>
+<p>Hardik. (2025, September 2). TryHackMe : Lian_Yu walkthrough. Medium. Diakses pada 17 September 2026, dari https://medium.com/@H42DiK/tryhackme-lian-yu-walkthrough-58fc4d366d40</p>
+  </div>
+
+  <div class="giscus-wrapper">
+    <script src="https://giscus.app/client.js" data-repo="analissiberpurwakarta/blog" data-repo-id="R_kgDOTuVy2A"
+      data-category="General" data-category-id="DIC_kwDOTuVy2M4DETLx" data-mapping="pathname" data-strict="0"
+      data-reactions-enabled="1" data-emit-metadata="0" data-input-position="bottom" data-theme="cobalt" data-lang="en"
+      crossorigin="anonymous" async>
+      </script>
+  </div>
+</article>
+
+        </main>
+
+        <footer>
+            &copy; 2026 Analis Siber Purwakarta
+        </footer>
+    </div>
+    <script src="/blog/static/js/main.js"></script>
+</body>
+</html>
