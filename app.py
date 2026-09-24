@@ -2,6 +2,12 @@ from flask import Flask, render_template, abort, request, make_response, send_fr
 from utils.loader import get_all_posts, get_post_by_slug
 from utils.parser import render_markdown
 import os
+import logging
+
+logging.basicConfig(
+    level=logging.INFO,
+    format='[%(asctime)s] %(levelname)s in %(name)s: %(message)s'
+)
 
 app = Flask(__name__)
 

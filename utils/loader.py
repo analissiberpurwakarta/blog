@@ -2,10 +2,13 @@ import os
 import glob
 import frontmatter
 import re
+import logging
 from werkzeug.utils import secure_filename
 from datetime import datetime
 
 POST_DIR = os.path.join(os.path.dirname(os.path.dirname(__file__)), 'posts')
+
+logger = logging.getLogger(__name__)
 
 def _parse_date(date_str: str) -> datetime:
     if not date_str:
@@ -90,7 +93,7 @@ def get_all_posts(parse_body: bool = False) -> list[dict]:
             posts.append(item)
         except Exception as e:
             # Mengabaikan file yang gagal di-unggah/corrupt
-            continue
+            logger.warning(f"Gagal load post '{filepath}': {e}")
 
     posts.sort(key=lambda x: _parse_date(x.get('date', '')), reverse = True)
     return posts
@@ -113,7 +116,7 @@ def get_post_by_slug(slug: str) -> dict | None:
                 'content': _secure_extenal_links(post.content)
             }
         except Exception as e:
-            print(f"[WARNING] Gagal load post '{slug}': {e}")
+            logger.warning(f"Gagal load post dengan slug '{slug}': {e}")
             return None
 
     posts = get_all_posts(parse_body=True)
