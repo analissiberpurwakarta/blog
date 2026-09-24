@@ -1,5 +1,5 @@
 from flask import Flask, render_template, abort, request, make_response, send_from_directory
-from utils.loader import get_all_posts, get_post_by_slug
+from utils.loader import get_all_posts, get_post_by_slug, get_archive_summary, get_posts_by_year_month
 from utils.parser import render_markdown
 import os
 import logging
@@ -33,7 +33,33 @@ def home():
     posts = get_all_posts(parse_body=False)
     # Mengumpulkan semua tag unik untuk ditampilkan di sidebar/header
     all_tags = sorted(list({tag for p in posts for tag in p.get('tags', [])}))
-    return render_template('home.html', posts=posts, tag=all_tags)
+    archive_summary = get_archive_summary(posts)
+    return render_template('home.html', posts=posts, tag=all_tags, archive_summary=archive_summary)
+
+MONTH_NAMES_ID = {
+    '01': 'Januari',
+    '02': 'Februari',
+    '03': 'Maret',
+    '04': 'April',
+    '05': 'Mei',
+    '06': 'Juni',
+    '07': 'Juli',
+    '08': 'Agustus',
+    '09': 'September',
+    '10': 'Oktober',
+    '11': 'November',
+    '12': 'Desember'
+}
+
+@app.route('/archive/<year>')
+def archive_by_year(year):
+    posts = get_posts_by_year_month(year)
+    return render_template('archive.html', posts=posts)
+
+@app.route('/archive/<year>/<month>')
+def archive_by_year_month(year, month):
+    posts = get_posts_by_year_month(year, month)
+    return render_template('archive.html', posts=posts)
 
 @app.route('/posts/<slug>')
 def post_detail(slug):
@@ -81,8 +107,12 @@ def sitemap():
     output_dir = os.path.join(os.path.dirname(__file__), 'output')
     return send_from_directory(output_dir, 'sitemap.xml', mimetype='application/xml')
 
+@app.context_processor
+def inject_month_names():
+    return dict(month_names=MONTH_NAMES_ID)
+
 if __name__ == '__main__':
     app.run(
-        debug=os.getenv('FLASK_DEBUG', 'false').lower() == 'TRUE',
+        debug=os.getenv('FLASK_DEBUG', 'false').lower() == 'true',
         port=int(os.getenv('PORT', 5000))
     )

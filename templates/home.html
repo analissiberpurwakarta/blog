@@ -3,6 +3,7 @@
 {% block title %}Home - Analis Siber Purwakarta{% endblock %}
 
 {% block content %}
+<div class="home-layout">
 <section class="post-list">
     {% for post in posts%}
     <article class="post-card">
@@ -19,4 +20,25 @@
     <p class="post-summary">Belum ada artikel yang terpublikasi</p>
     {% endfor %}
 </section>
+
+<aside class="archive-sidebar">
+    <h3 class="sidebar-title">Arsip</h3>
+    {% for year, months in archive_summary.items() %}
+    <div class="archive-year-group">
+        <a href="{{ base_url }}/archive/{{ year }}" class="archive-year-label">{{ year }}</a>
+        <ul class="archive-month-list">
+            {% for month, count in months.items() %}
+            <li>
+                <a href="{{ base_url }}/archive/{{ year }}/{{ month }}">
+                    {{ month_names[month] }} <span class="archive-count">({{ count }})</span>
+                </a>
+            </li>
+            {% endfor %}
+        </ul>
+    </div>
+    {% else %}
+    <p class="archive-empty">Belum Ada Arsip</p>
+    {% endfor %}
+</aside>
+</div>
 {% endblock %}

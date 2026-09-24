@@ -123,5 +123,37 @@ def get_post_by_slug(slug: str) -> dict | None:
     for post in posts:
         if post.get('slug') == slug:
             return post
-
+        
     return None
+
+def get_archive_summary(posts: list[dict]) -> dict:
+    summary = {}
+    for post in posts:
+        dt = _parse_date(post.get('date', ''))
+        if dt == datetime.min:
+            continue
+        year  = str(dt.year)
+        month = f"{dt.month:02d}"
+        summary.setdefault(year, {})
+        summary[year][month] = summary[year].get(month, 0) + 1
+
+    sorted_summary = {}
+    for year in sorted(summary.keys(), reverse=True):
+        month_sorted = dict(sorted(summary[year].items(), key=lambda x: x[0], reverse=True))
+        sorted_summary[year] = month_sorted
+    return sorted_summary
+
+def get_posts_by_year_month(year: str, month: str = None) -> list[dict]:
+    posts = get_all_posts(parse_body=False)
+    result = []
+
+    for post in posts:
+        dt = _parse_date(post.get('date', ''))
+        if dt == datetime.min:
+            continue
+        if str(dt.year) != year:
+            continue
+        if month and f"{dt.month:02d}" != month:
+            continue
+        result.append(post)
+    return result
