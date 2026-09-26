@@ -3,7 +3,7 @@ import shutil
 import xml.etree.ElementTree as ET
 from datetime import datetime
 from app import app
-from utils.loader import get_all_posts
+from utils.loader import get_all_posts, get_archive_summary
 
 OUTPUT_DIR = os.path.join(os.path.dirname(__file__), 'output')
 
@@ -136,6 +136,18 @@ def build_static_site():
             res = client.get(f'/tag/{tag}')
             if res.status_code == 200:
                 save_html(f'/tag/{tag}', res.get_data(as_text=True))
+
+        # 6. Archive by year & month
+        archive_summary = get_archive_summary(posts)
+        for year, months in archive_summary.items():
+            res = client.get(f'/archive/{year}')
+            if res.status_code == 200:
+                save_html(f'/archive/{year}', res.get_data(as_text=True))
+
+            for month in months:
+                res = client.get(f'/archive/{year}/{month}')
+                if res.status_code == 200:
+                    save_html(f'/archive/{year}/{month}', res.get_data(as_text=True))
 
         # Costum 404 Page
         res = client.get('/404')
